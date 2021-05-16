@@ -1,0 +1,50 @@
+apiVersion: skaffold/v2beta15
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+      - "infra/k8s/*.yaml"
+build:
+  local:
+    push: false
+  # googleCloudBuild:
+  #   projectId: tickets-dev-313209
+  artifacts:
+    - image: nchukka/auth
+      context: auth
+      sync:
+        manual:
+          - src: "src/**/*"
+            dest: .
+    - image: nchukka/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.js'
+            dest: .
+    - image: nchukka/tickets
+      context: tickets
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*'
+            dest: .
+    - image: nchukka/orders
+      context: orders
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*'
+            dest: .
+    - image: nchukka/expiration
+      context: expiration
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*'
+            dest: .
